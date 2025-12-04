@@ -1,0 +1,39 @@
+import glob, os
+import cv2
+from deepface import DeepFace
+from datetime import date
+from deepface.detectors import FaceDetector
+
+#today = date.today()
+database="/var/www/html/ez/python/database"
+#folder_path = f'/var/www/html/ez/python/crossed_image/{today}/'
+folder_path = f'/var/www/html/ez/python/crossed_image/2024-10-09/'
+image_files = glob.glob(os.path.join(folder_path, "*.jpg"))
+
+for image in image_files:
+    print(image)
+    df = DeepFace.find(img_path = image, db_path = database,  model_name = "Facenet512", distance_metric ="cosine", enforce_detection=False, detector_backend="mediapipe")
+    print(df)
+    if df.empty:
+       continue
+    my_dict = {}
+    range_dict = {}
+    for i in range(len(df)):
+        im=df.iloc[:,0][i].split("/")
+        range_veri=df.iloc[:,1][i]
+        db_img=im[-1]
+        de=db_img.split("_")
+        eid=de[0]
+		
+        if eid in my_dict:
+          my_dict[eid] += 1
+          range_dict[eid] +=range_veri
+        else:
+          my_dict[eid] = 1
+          range_dict[eid] =range_veri
+    #print(my_dict)
+    ks=range_dict.keys()
+    for k in ks:
+      range_dict[k]=range_dict[k]/my_dict[k]
+      print(str(k) + ":" + str(my_dict[k]) + "," + str(range_dict[k]))
+    #print(range_dict)
