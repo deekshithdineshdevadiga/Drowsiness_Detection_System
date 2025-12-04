@@ -1,0 +1,4 @@
+cloud upload
+unknown log
+Attendance email for the absent one
+Attentance for people in uknown log by mapping their id 
